@@ -29,7 +29,7 @@ void shuffleKeys(std::vector<uint32_t> &keys)
 
 int main()
 {
-    std::vector<uint32_t> test_sizes = {65536};
+    std::vector<uint32_t> test_sizes = {32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536};
 
     for (uint32_t n : test_sizes)
     {
