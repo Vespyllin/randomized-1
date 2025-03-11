@@ -1,6 +1,8 @@
 #ifndef PERFECTHASHTABLE_H
 #define PERFECTHASHTABLE_H
 
+#include <stdint.h> //defines uint32_t as unsigned 64-bit integer.
+
 class PerfectHashTable
 {
 private:
@@ -11,14 +13,11 @@ private:
     const uint32_t EMPTY_VAL = UINT32_MAX; // Number used to indicate the empty value in a vector
 
 public:
-    // Constructor
-    PerfectHashTable(const std::vector<uint32_t> &keys);
+    PerfectHashTable(uint32_t n);
 
-    // Initialize the hash table
-    void initialize(const std::vector<uint32_t> &keys);
+    void insert(const std::vector<uint32_t> &keys);
 
-    // Check if a key exists in the hash table
-    bool search(int key);
+    bool search(uint32_t key);
 };
 
 #endif // PERFECTHASHTABLE_H

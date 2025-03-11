@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <random>
+
 #include "chaining_hashing.h"
 #include "perfect_hashing.h"
 #include "red_black_tree.h"
@@ -10,7 +11,7 @@
 using namespace std;
 
 // Function to generate structured keys {i² mod n}
-vector<uint32_t> generateKeys(int n)
+vector<uint32_t> generateKeys(uint32_t n)
 {
     vector<uint32_t> keys;
     for (int i = 0; i < n; i++)
@@ -30,11 +31,11 @@ void shuffleKeys(vector<uint32_t> &keys)
 
 int main()
 {
-    vector<int> test_sizes = {32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536};
+    vector<uint32_t> test_sizes = {32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536};
 
-    for (int n : test_sizes)
+    for (uint32_t n : test_sizes)
     {
-        cout << "\nRunning benchmarks for n = " << n << "...\n";
+        cout << "Running benchmarks for n = " << n << "...\n";
 
         // Generate and shuffle keys
         vector<uint32_t> keys = generateKeys(n);
@@ -42,13 +43,13 @@ int main()
 
         // Initialize Data Structures
         // ChainingHashTable chainingTable(n);
-        PerfectHashTable perfectTable(keys);
-        RedBlackTree rbTree;
+        PerfectHashTable perfectTable(n);
+        // RedBlackTree rbTree;
 
         // Run Benchmarks
         // benchmarkHashTable("Chaining Hashing", chainingTable, keys);
         benchmarkHashTable("Perfect Hashing", perfectTable, keys);
-        benchmarkHashTable("Red-Black Tree", rbTree, keys);
+        // benchmarkHashTable("Red-Black Tree", rbTree, keys);
 
         // Output max chain size for chaining hashing
         // cout << "Max Chain Size (Chaining Hashing): " << chainingTable.getMaxChainSize() << "\n";
