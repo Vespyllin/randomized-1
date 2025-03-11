@@ -9,6 +9,6 @@
 
 // Function to benchmark hash tables and trees
 template <typename HashTable>
-void benchmarkHashTable(const std::string& name, HashTable& table, const std::vector<int>& keys);
+void benchmarkHashTable(const std::string &name, HashTable &table, const std::vector<uint32_t> &keys);
 
 #endif // BENCHMARKS_H
