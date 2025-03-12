@@ -1,40 +1,56 @@
-#include "benchmarks.h"
+
+#include <vector>
+#include <string>
 #include <iostream>
 #include <chrono>
 
-using namespace std;
-using namespace std::chrono;
+// #include "chaining_hashing.h"
+#include "../perfect/perfect_hashing.h"
+#include "../red_black/red_black_tree.h"
+#include "../benchmarks/benchmarks.h"
 
 // Template function to benchmark any hash table or tree
 template <typename HashTable>
-void benchmarkHashTable(const string& name, HashTable& table, const vector<int64_t>& keys) {
-    cout << "Benchmarking: " << name << "\n";
+void benchmarkHashTable(const std::string &name, HashTable &table, const std::vector<uint32_t> &keys)
+{
+    std::cout << "Benchmarking: " << name << "\n";
 
     // Measure Insertion Time
-    auto start = high_resolution_clock::now();
-    for (int64_t key : keys) {
-        table.insert(key);
+    auto start = std::chrono::high_resolution_clock::now();
+
+    if constexpr (std::is_same<HashTable, PerfectHashTable>::value)
+    {
+        table.insert(keys);
     }
-    auto stop = high_resolution_clock::now();
-    auto insert_time = duration_cast<microseconds>(stop - start).count();
+    else
+    {
+        for (uint32_t key : keys)
+        {
+            table.insert(key);
+        }
+    }
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto insert_time = std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count();
+
+    std::cout << "\tInsert Time: " << insert_time << "µs\n";
 
     // Measure Query/Search Time
-    start = high_resolution_clock::now();
-    for (int64_t key : keys) {
+    start = std::chrono::high_resolution_clock::now();
+    for (int key : keys)
+    {
         table.search(key);
     }
-    stop = high_resolution_clock::now();
-    auto query_time = duration_cast<microseconds>(stop - start).count();
+    stop = std::chrono::high_resolution_clock::now();
+    auto query_time = std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count();
+    std::cout << "\tQuery Time: " << query_time << "µs\n";
 
-    // Output results
-    cout << "   Insert Time: " << insert_time << " us\n";
-    cout << "   Query Time: " << query_time << " us\n";
-    cout << "   Total Time: " << (insert_time + query_time) << " us\n";
+    std::cout << "\tTotal Time: " << (insert_time + query_time) << "µs\n";
 
-    // If it's a chaining hash table, output max chain size
-    if constexpr (std::is_same<HashTable, ChainingHashTable>::value) {
-        cout << "   Max Chain Size: " << table.getMaxChainSize() << "\n";
-    }
+    // // // If it's a chaining hash table, output max chain size
+    // // if constexpr (std::is_same<HashTable, ChainingHashTable>::value)
+    // // {
+    // //     std::cout << "\tMax Chain Size: " << table.getMaxChainSize() << "\n";
+    // // }
 
-    cout << "------------------------------------\n";
+    std::cout << "------------------------------------" << std::endl;
 }

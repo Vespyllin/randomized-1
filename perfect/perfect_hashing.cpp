@@ -6,9 +6,9 @@
 #include "perfect_hashing.h"
 #include "../common/common.h"
 
-PerfectHashTable::PerfectHashTable(uint64_t n)
+PerfectHashTable::PerfectHashTable(uint32_t n)
 {
-    m = n * n;        // Multiply shift is 2-universal, hence m must be 2 n^2 !! Circumvented for now
+    m = 2 * n * n;    // Multiply shift is 2-universal, hence m must be 2n^2
     l = std::log2(m); // Bits required to represent m
 }
 
@@ -21,7 +21,7 @@ void PerfectHashTable::insert(const std::vector<uint32_t> &keys)
     while (collision)
     {
         collision = false;
-        a = random_uint64() | 1;
+        a = random_uint32() | 1;
         hashTable.assign(m, EMPTY_VAL); // Reset hashTable
 
         // Check for collisions
@@ -29,11 +29,9 @@ void PerfectHashTable::insert(const std::vector<uint32_t> &keys)
         {
             for (int j = i + 1; j < n && !collision; ++j)
             {
-                auto ki = multiply_shift_uint32(keys[i], l, a);
-                auto kj = multiply_shift_uint32(keys[j], l, a);
-
-                if (keys[i] != keys[j] && ki == kj)
+                if (keys[i] != keys[j] && multiply_shift_uint32(keys[i], l, a) == multiply_shift_uint32(keys[j], l, a))
                 {
+                    std::cout << "C" << keys[i] << ":" << keys[j] << " - " << multiply_shift_uint32(keys[i], l, a) << " : " << multiply_shift_uint32(keys[j], l, a) << " " << EMPTY_VAL << std::endl;
                     collision = true;
                 }
             }
