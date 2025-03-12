@@ -15,7 +15,7 @@ private:
 public:
     PerfectHashTable(uint32_t n);
 
-    void insert(const std::vector<uint32_t> &keys);
+    int insert(const std::vector<uint32_t> &keys);
 
     bool search(uint32_t key);
 };

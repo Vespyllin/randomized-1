@@ -3,7 +3,7 @@
 
 // Function to benchmark hash tables and trees
 template <typename HashTable>
-void benchmarkHashTable(const std::string &name, HashTable &table, const std::vector<uint32_t> &keys);
+std::vector<int64_t> benchmarkHashTable(HashTable &table, const std::vector<uint32_t> &keys);
 
 #include "benchmarks.tpp"
 

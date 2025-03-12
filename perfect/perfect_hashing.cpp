@@ -13,10 +13,11 @@ PerfectHashTable::PerfectHashTable(uint32_t n)
 }
 
 // Initialize the dictionary
-void PerfectHashTable::insert(const std::vector<uint32_t> &keys)
+int PerfectHashTable::insert(const std::vector<uint32_t> &keys)
 {
     auto n = keys.size();
 
+    int collisions = 0;
     bool collision = true;
     while (collision)
     {
@@ -31,8 +32,9 @@ void PerfectHashTable::insert(const std::vector<uint32_t> &keys)
             {
                 if (keys[i] != keys[j] && multiply_shift_uint32(keys[i], l, a) == multiply_shift_uint32(keys[j], l, a))
                 {
-                    std::cout << "C" << keys[i] << ":" << keys[j] << " - " << multiply_shift_uint32(keys[i], l, a) << " : " << multiply_shift_uint32(keys[j], l, a) << " " << EMPTY_VAL << std::endl;
+                    // std::cout << "C" << keys[i] << ":" << keys[j] << " - " << multiply_shift_uint32(keys[i], l, a) << " : " << multiply_shift_uint32(keys[j], l, a) << " " << EMPTY_VAL << std::endl;
                     collision = true;
+                    collisions++;
                 }
             }
         }
@@ -41,6 +43,8 @@ void PerfectHashTable::insert(const std::vector<uint32_t> &keys)
     // Insert keys into the dictionary
     for (int i = 0; i < n; ++i)
         hashTable[multiply_shift_uint32(keys[i], l, a)] = keys[i];
+
+    return collisions;
 }
 
 // Check if a key exists in the dictionary

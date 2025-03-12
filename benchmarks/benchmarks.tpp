@@ -11,16 +11,14 @@
 
 // Template function to benchmark any hash table or tree
 template <typename HashTable>
-void benchmarkHashTable(const std::string &name, HashTable &table, const std::vector<uint32_t> &keys)
+std::vector<int64_t> benchmarkHashTable(HashTable &table, const std::vector<uint32_t> &keys)
 {
-    std::cout << "Benchmarking: " << name << "\n";
-
     // Measure Insertion Time
+    int retries = 0;
     auto start = std::chrono::high_resolution_clock::now();
-
     if constexpr (std::is_same<HashTable, PerfectHashTable>::value)
     {
-        table.insert(keys);
+        retries = table.insert(keys);
     }
     else
     {
@@ -32,8 +30,6 @@ void benchmarkHashTable(const std::string &name, HashTable &table, const std::ve
     auto stop = std::chrono::high_resolution_clock::now();
     auto insert_time = std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count();
 
-    std::cout << "\tInsert Time: " << insert_time << "µs\n";
-
     // Measure Query/Search Time
     start = std::chrono::high_resolution_clock::now();
     for (int key : keys)
@@ -41,10 +37,8 @@ void benchmarkHashTable(const std::string &name, HashTable &table, const std::ve
         table.search(key);
     }
     stop = std::chrono::high_resolution_clock::now();
-    auto query_time = std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count();
-    std::cout << "\tQuery Time: " << query_time << "µs\n";
 
-    std::cout << "\tTotal Time: " << (insert_time + query_time) << "µs\n";
+    auto query_time = std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count();
 
     // // // If it's a chaining hash table, output max chain size
     // // if constexpr (std::is_same<HashTable, ChainingHashTable>::value)
@@ -52,5 +46,5 @@ void benchmarkHashTable(const std::string &name, HashTable &table, const std::ve
     // //     std::cout << "\tMax Chain Size: " << table.getMaxChainSize() << "\n";
     // // }
 
-    std::cout << "------------------------------------" << std::endl;
+    return {static_cast<int64_t>(keys.size()), insert_time, query_time, retries};
 }
