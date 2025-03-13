@@ -6,7 +6,7 @@
 #include <fstream>
 #include <cstdint>
 
-// #include "chaining_hashing.h"
+#include "chaining/chaining_hashing.h"
 #include "perfect/perfect_hashing.h"
 #include "red_black/red_black_tree.h"
 #include "benchmarks/benchmarks.h"
@@ -56,6 +56,13 @@ int main()
             shuffleKeys(keys);
             keys.shrink_to_fit();
 
+            // Uncomment the following to benchmark Hashing with chaining:
+
+            //ChainingHashTable chainingTable(n);
+            // Benchmark the ChainingHashTable
+            // auto x = benchmarkHashTable(chainingTable, keys);
+            // results.push_back(x);
+            
             PerfectHashTable perfectTable(keys.size());
             auto x = benchmarkHashTable(perfectTable, keys);
             results.push_back(x);
