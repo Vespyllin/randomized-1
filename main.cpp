@@ -6,85 +6,104 @@
 #include <fstream>
 #include <cstdint>
 
+#include "common/common.h"
 #include "chaining/chaining_hashing.h"
 #include "perfect/perfect_hashing.h"
 #include "red_black/red_black_tree.h"
 #include "benchmarks/benchmarks.h"
 
-// Function to generate structured keys {i² mod n}
-std::vector<uint32_t> generateKeys(uint32_t n)
-{
-    std::set<uint32_t> keys;
-    for (uint32_t i = 0; i < n; i++)
-    {
-        keys.insert((i * i) % n);
-    }
-
-    // Return vector of unique keys
-    std::vector<uint32_t> keyVector(keys.begin(), keys.end());
-    return keyVector;
-}
-
-// Function to shuffle keys before insertion
-void shuffleKeys(std::vector<uint32_t> &keys)
-{
-    std::random_device rd;
-    std::mt19937 g(rd());
-    shuffle(keys.begin(), keys.end(), g);
-}
-
 int main()
 {
-    std::vector<uint32_t> test_sizes = {32000, 65536};
 
-    std::vector<std::vector<int64_t>> results;
-    std::ofstream outfile("perfect.csv");
-    if (!outfile.is_open())
+    std::ofstream outfilePerfect("results/perfect.csv", std::ios::app);
+    std::ofstream outfileChaining("results/chaining.csv", std::ios::app);
+    std::ofstream outfileRedBlackTree("results/redblacktree.csv", std::ios::app);
+
+    if (!outfilePerfect.is_open() || !outfileChaining.is_open() || !outfileRedBlackTree.is_open())
     {
-        std::cerr << "Failed to open file for writing.\n";
+        std::cerr << "Failed to open file one of the CSV files.\n";
         return 0;
     }
 
-    for (uint32_t n : test_sizes)
-    {
-        std::cout << "Running benchmarks for attempted n = " << n << "...\n";
+    outfilePerfect
+        << "n" << ","
+        << "insertion" << ","
+        << "query" << "\n";
 
-        for (size_t i = 0; i < 100; i++)
+    outfileChaining
+        << "n" << ","
+        << "insertion" << ","
+        << "query" << "\n";
+
+    outfileRedBlackTree
+        << "n" << ","
+        << "insertion" << ","
+        << "query" << "\n";
+
+    std::vector<uint64_t> test_sizes = {
+        131072,
+        262144,
+        524288,
+        1048576,
+        2097152,
+        4194304,
+        // 8388608,
+        // 16777216,
+        // 33554432,
+        // 67108864,
+    };
+
+    uint64_t iterations = 100;
+
+    for (uint32_t test_size : test_sizes)
+    {
+        std::cout << "Running benchmarks for attempted n = " << test_size << "...\n";
+
+        for (size_t i = 0; i < iterations; i++)
         {
+            std::cout << "    " << "Iteration " << i + 1 << ":\n";
             // Generate and shuffle keys
-            std::vector<uint32_t> keys = generateKeys(n);
+            std::cout << "\tGenerating random keys.\n";
+            std::vector<uint32_t> keys = generateKeys(test_size);
             shuffleKeys(keys);
             keys.shrink_to_fit();
 
-            // Uncomment the following to benchmark Hashing with chaining:
+            auto n = keys.size();
 
-            //ChainingHashTable chainingTable(n);
-            // Benchmark the ChainingHashTable
-            // auto x = benchmarkHashTable(chainingTable, keys);
-            // results.push_back(x);
-            
-            PerfectHashTable perfectTable(keys.size());
-            auto x = benchmarkHashTable(perfectTable, keys);
-            results.push_back(x);
+            PerfectHashTable perfectTable(n);
+            ChainingHashTable chainingTable(n);
+            RedBlackTree rbTree = RedBlackTree();
+
+            std::cout << "\tTesting perfect hash table.\n";
+            auto perfectResult = benchmarkPerfectHashTable(perfectTable, keys);
+
+            std::cout << "\tTesting chaining hash table.\n";
+            auto chainingResult = benchmarkChainingHashTable(chainingTable, keys);
+
+            std::cout << "\tTesting red black tree.\n";
+            auto redBlackResult = benchmarkRedBlackTree(rbTree, keys);
+
+            outfilePerfect
+                << perfectResult[0] << ","
+                << perfectResult[1] << ","
+                << perfectResult[2] << std::endl;
+
+            outfileChaining
+                << chainingResult[0] << ","
+                << chainingResult[1] << ","
+                << chainingResult[2] << std::endl;
+
+            outfileRedBlackTree
+                << redBlackResult[0] << ","
+                << redBlackResult[1] << ","
+                << redBlackResult[2] << std::endl;
         }
     }
 
-    std::cout << "Writing data...\n";
-    outfile
-        << "n" << ","
-        << "insertion" << ","
-        << "query" << ","
-        << "retries" << "\n";
+    std::cout << "---------------------------------" << std::endl;
 
-    for (auto result : results)
-    {
-        outfile
-            << result[0] << ","
-            << result[1] << ","
-            << result[2] << ","
-            << result[3] << "\n";
-    }
-
-    outfile.close();
+    outfilePerfect.close();
+    outfileChaining.close();
+    outfileRedBlackTree.close();
     return 0;
 }

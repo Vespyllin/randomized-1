@@ -56,6 +56,7 @@
         "typeinfo": "cpp",
         "variant": "cpp",
         "*.tpp": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "list": "cpp"
     }
 }
