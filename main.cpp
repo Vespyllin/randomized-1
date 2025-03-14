@@ -44,7 +44,8 @@ int main()
         2048, 4096, 8192, 16384, 32768,
         65536, 131072, 262144, 524288,
         1048576, 2097152, 4194304,
-        8388608, 16777216};
+        8388608, 16777216,
+        33554432, 67108864};
 
     uint64_t iterations = 100;
 
@@ -55,7 +56,7 @@ int main()
         for (size_t i = 0; i < iterations; i++)
         {
             std::cout << "    " << "Iteration " << i + 1 << ":\n";
-            // Generate and shuffle keys
+
             std::cout << "\tGenerating random keys.\n";
             std::vector<uint32_t> keys = generateKeys(test_size);
             shuffleKeys(keys);
