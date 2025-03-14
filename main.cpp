@@ -52,20 +52,21 @@ int main()
     for (uint32_t test_size : test_sizes)
     {
         std::cout << "Running benchmarks for attempted n = " << test_size << "...\n";
-
-        for (size_t i = 0; i < iterations; i++)
-        {
-            std::cout << "    " << "Iteration " << i + 1 << ":\n";
-
+             ChainingHashTable chainingTable(test_size);
+        
             std::cout << "\tGenerating random keys.\n";
             std::vector<uint32_t> keys = generateKeys(test_size);
             shuffleKeys(keys);
             keys.shrink_to_fit();
+        
+        for (size_t i = 0; i < iterations; i++)
+        {
+            std::cout << "    " << "Iteration " << i + 1 << ":\n";
 
-            auto n = keys.size();
+            // auto n = keys.size();
 
-            PerfectHashTable perfectTable(n);
-            ChainingHashTable chainingTable(n);
+            PerfectHashTable perfectTable(test_size);
+            ChainingHashTable chainingTable(test_size);
             RedBlackTree rbTree = RedBlackTree();
 
             std::cout << "\tTesting perfect hash table.\n";
@@ -92,6 +93,8 @@ int main()
                 << redBlackResult[1] << ","
                 << redBlackResult[2] << std::endl;
         }
+        std::cout << "\tWriting LargestListSizeData\n";
+        chainingTable.recordLargestListSizeData(keys, {test_size}, "results/list_size.csv");
     }
 
     std::cout << "---------------------------------" << std::endl;
