@@ -5,6 +5,8 @@
 #include <list>
 #include <cstdint>
 #include <iostream>
+#include <random>
+#include <string>
 
 class ChainingHashTable
 {
@@ -25,11 +27,14 @@ public:
     // Method to query if a key exists in the hash table
     bool search(uint32_t key) const;
 
+    size_t getLargestListSize() const;
+
     // Method to print the table (for debugging)
     void printTable() const;
 
     // Method to resize the table
     void resize(size_t new_size);
+    void recordLargestListSizeData(const std::vector<uint32_t>& keys, const std::vector<uint64_t>& test_sizes, const std::string& filename);
 };
 
 #endif
