@@ -7,6 +7,14 @@ ChainingHashTable::ChainingHashTable(size_t size)
 
 size_t ChainingHashTable::hash(uint32_t key) const
 {
+     // Defeat the "flickering" of 4.4 
+     // const uint32_t A = 0x9E3779B9;
+     // uint32_t h = key;
+    // h = h * A;
+    // h = (h >> 16) ^ h;
+    // h = h * A;
+    // h = (h >> 16) ^ h;
+    
     return key % table_size; // Simple mod-based hash function
 }
 
